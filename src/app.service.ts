@@ -14,6 +14,7 @@ export class AppService {
     let offset: number = 24;
     let dateBegin = parseISO((String)(filters.dateBeginSelected));
     let dateEnd = parseISO((String)(filters.dateEndSelected));
+    let hour_selected: boolean = false
     dateBegin.setMinutes(0);
     dateEnd.setMinutes(0);
     dateBegin.setSeconds(0);
@@ -23,6 +24,12 @@ export class AppService {
     if (differenceInDays(dateEnd, dateBegin) < 4){
       offset = Number(filters.interval[0]);
     }
+
+    console.log(differenceInHours(dateEnd, dateBegin) == 1)
+    if (differenceInHours(dateEnd, dateBegin) == 1){
+      hour_selected = true;
+    }
+
     while (compareAsc(dateBegin, dateEnd) == -1) {
       let value: number;
       
@@ -32,10 +39,10 @@ export class AppService {
       if (filters.dataAssets == "alarms" && value >= 10) value -= 10;
       
       result.push({ name: String(dateBegin), value: Math.floor(value) });
-      if(differenceInHours(dateEnd, dateBegin) <= 1)
-        dateBegin = addMinutes(dateBegin, 5);
+      if(hour_selected)
+      dateBegin = addMinutes(dateBegin, 5);
       else
-        dateBegin = addHours(dateBegin, offset);
+    dateBegin = addHours(dateBegin, offset);
     }
 
     return { response: result };
@@ -48,7 +55,7 @@ export class AppService {
     
     for (let i = 1; i <= TOT_CONTAINERS; i++) {
       let value = Math.floor(Math.random() * 20 * ((diffDays+1) *1.25));
-      if (filters.dataAssets == "alarms" && value >= 10) value -= 10 * ((diffDays+1) *1.25);
+      if (filters.dataAssets == "alarms" && value >= 10) value -= 10;
       result.push({ name: `Container ${i}`, value });
     }
 
